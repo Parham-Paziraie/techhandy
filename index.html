@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechHandy - Professional Device Repair</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>TechHandy</h1>
+            <p>Professional On-Site Device Repair</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="repair-posts">
+            <h2>Recent Repairs</h2>
+            <div class="admin-panel">
+                <h3>Add New Repair Post</h3>
+                <form id="add-post-form">
+                    <textarea id="post-description" placeholder="Describe the repair work done..." required></textarea>
+                    <button type="submit">Add Post</button>
+                </form>
+            </div>
+            <div id="posts-container">
+                <!-- Posts will be dynamically added here -->
+            </div>
+        </section>
+
+        <section id="videos">
+            <h2>Repair Timelapses</h2>
+            <div class="video-gallery">
+                <div class="video-slot">
+                    <h3>Video 1</h3>
+                    <div class="video-placeholder">
+                        <p>Upload your first timelapse video</p>
+                        <input type="url" placeholder="YouTube/Vimeo URL" id="video1-url">
+                        <button onclick="updateVideo(1)">Update Video</button>
+                    </div>
+                    <div id="video1-container"></div>
+                </div>
+                <div class="video-slot">
+                    <h3>Video 2</h3>
+                    <div class="video-placeholder">
+                        <p>Upload your second timelapse video</p>
+                        <input type="url" placeholder="YouTube/Vimeo URL" id="video2-url">
+                        <button onclick="updateVideo(2)">Update Video</button>
+                    </div>
+                    <div id="video2-container"></div>
+                </div>
+                <div class="video-slot">
+                    <h3>Video 3</h3>
+                    <div class="video-placeholder">
+                        <p>Upload your third timelapse video</p>
+                        <input type="url" placeholder="YouTube/Vimeo URL" id="video3-url">
+                        <button onclick="updateVideo(3)">Update Video</button>
+                    </div>
+                    <div id="video3-container"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Contact Information</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <h3>Phone</h3>
+                    <p><a href="tel:+1234567890">+1 (234) 567-8900</a></p>
+                </div>
+                <div class="contact-item">
+                    <h3>Email</h3>
+                    <p><a href="mailto:info@techhandy.com">info@techhandy.com</a></p>
+                </div>
+                <div class="contact-item">
+                    <h3>Service Area</h3>
+                    <p>On-site repairs within 25 miles</p>
+                </div>
+                <div class="contact-item">
+                    <h3>Hours</h3>
+                    <p>Mon-Fri: 9AM-6PM<br>Sat: 10AM-4PM<br>Sun: Emergency only</p>
+                </div>
+            </div>
+            <div class="contact-form">
+                <h3>Edit Contact Info</h3>
+                <form id="contact-form">
+                    <input type="tel" id="phone" placeholder="Phone Number">
+                    <input type="email" id="email" placeholder="Email Address">
+                    <input type="text" id="service-area" placeholder="Service Area">
+                    <textarea id="hours" placeholder="Business Hours"></textarea>
+                    <button type="submit">Update Contact Info</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 TechHandy. Professional device repair services.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

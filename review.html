@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave a Review - TechHandy</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>TechHandy</h1>
+            <p>Leave a Review for Your Device Repair</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="review-section">
+            <div id="repair-details">
+                <!-- Repair details will be loaded here -->
+            </div>
+
+            <div id="review-form-container">
+                <h2>How was your repair experience?</h2>
+                <form id="review-form">
+                    <div class="rating-container">
+                        <label>Rating:</label>
+                        <div class="stars">
+                            <span class="star" data-rating="1">★</span>
+                            <span class="star" data-rating="2">★</span>
+                            <span class="star" data-rating="3">★</span>
+                            <span class="star" data-rating="4">★</span>
+                            <span class="star" data-rating="5">★</span>
+                        </div>
+                        <input type="hidden" id="rating" name="rating" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="first-name">First Name (Optional):</label>
+                        <input type="text" id="first-name" name="firstName" placeholder="Your first name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="last-name">Last Name (Optional):</label>
+                        <input type="text" id="last-name" name="lastName" placeholder="Your last name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comment">Comment (Optional):</label>
+                        <textarea id="comment" name="comment" placeholder="Tell us about your experience..." rows="4"></textarea>
+                    </div>
+
+                    <button type="submit">Submit Review</button>
+                </form>
+            </div>
+
+            <div id="success-message" class="hidden">
+                <h2>Thank you for your review!</h2>
+                <p>Your feedback has been submitted successfully.</p>
+                <a href="index.html" class="btn">Back to Main Site</a>
+            </div>
+
+            <div id="error-message" class="hidden">
+                <h2>Invalid Link</h2>
+                <p>This review link is not valid or has expired.</p>
+                <a href="index.html" class="btn">Back to Main Site</a>
+            </div>
+        </section>
+
+        <section id="existing-reviews">
+            <h2>Customer Reviews</h2>
+            <div id="reviews-container">
+                <!-- Existing reviews will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 TechHandy. Professional device repair services.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Initialize review page when loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeReviewPage();
+        });
+    </script>
+</body>
+</html>
