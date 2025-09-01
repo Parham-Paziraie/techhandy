@@ -3,6 +3,10 @@ const POSTS_KEY = 'techhandy_posts';
 const REVIEWS_KEY = 'techhandy_reviews';
 const CONTACT_KEY = 'techhandy_contact';
 const VIDEOS_KEY = 'techhandy_videos';
+const ADMIN_KEY = 'techhandy_admin';
+
+// Admin password (change this to your desired password)
+const ADMIN_PASSWORD = 'techhandy123';
 
 // Generate unique ID
 function generateId() {
@@ -30,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadContactInfo();
     loadVideos();
     initializeEventListeners();
+    checkAdminStatus();
 });
 
 // Event listeners for main page
@@ -44,6 +49,37 @@ function initializeEventListeners() {
     const contactForm = document.getElementById('contact-form');
     if (contactForm) {
         contactForm.addEventListener('submit', handleUpdateContact);
+    }
+
+    // Admin login modal events
+    const adminLoginBtn = document.getElementById('admin-login-btn');
+    const adminLogoutBtn = document.getElementById('admin-logout-btn');
+    const adminModal = document.getElementById('admin-modal');
+    const closeModal = document.getElementById('close-modal');
+    const adminLoginForm = document.getElementById('admin-login-form');
+
+    if (adminLoginBtn) {
+        adminLoginBtn.addEventListener('click', showAdminModal);
+    }
+
+    if (adminLogoutBtn) {
+        adminLogoutBtn.addEventListener('click', adminLogout);
+    }
+
+    if (closeModal) {
+        closeModal.addEventListener('click', hideAdminModal);
+    }
+
+    if (adminModal) {
+        adminModal.addEventListener('click', function(e) {
+            if (e.target === adminModal) {
+                hideAdminModal();
+            }
+        });
+    }
+
+    if (adminLoginForm) {
+        adminLoginForm.addEventListener('submit', handleAdminLogin);
     }
 }
 
@@ -388,4 +424,104 @@ function showErrorMessage() {
     document.getElementById('review-form-container').classList.add('hidden');
     document.getElementById('existing-reviews').classList.add('hidden');
     document.getElementById('error-message').classList.remove('hidden');
+}
+
+// Admin Authentication Functions
+function checkAdminStatus() {
+    const isLoggedIn = localStorage.getItem(ADMIN_KEY) === 'true';
+    
+    if (isLoggedIn) {
+        showAdminElements();
+    } else {
+        hideAdminElements();
+    }
+}
+
+function showAdminModal() {
+    const modal = document.getElementById('admin-modal');
+    const errorMessage = document.getElementById('login-error');
+    
+    if (modal) {
+        modal.classList.add('show');
+        modal.classList.remove('hidden');
+        document.getElementById('admin-password').value = '';
+        if (errorMessage) {
+            errorMessage.classList.add('hidden');
+        }
+    }
+}
+
+function hideAdminModal() {
+    const modal = document.getElementById('admin-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.classList.add('hidden');
+    }
+}
+
+function handleAdminLogin(e) {
+    e.preventDefault();
+    
+    const password = document.getElementById('admin-password').value;
+    const errorMessage = document.getElementById('login-error');
+    
+    if (password === ADMIN_PASSWORD) {
+        localStorage.setItem(ADMIN_KEY, 'true');
+        hideAdminModal();
+        showAdminElements();
+        alert('Successfully logged in as admin!');
+    } else {
+        if (errorMessage) {
+            errorMessage.classList.remove('hidden');
+        }
+        document.getElementById('admin-password').value = '';
+    }
+}
+
+function adminLogout() {
+    localStorage.removeItem(ADMIN_KEY);
+    hideAdminElements();
+    alert('Logged out successfully!');
+}
+
+function showAdminElements() {
+    // Show logout button, hide login button
+    const loginBtn = document.getElementById('admin-login-btn');
+    const logoutBtn = document.getElementById('admin-logout-btn');
+    
+    if (loginBtn) loginBtn.classList.add('hidden');
+    if (logoutBtn) logoutBtn.classList.remove('hidden');
+    
+    // Show all admin-only elements
+    const adminElements = document.querySelectorAll('.admin-only');
+    adminElements.forEach(element => {
+        element.classList.remove('hidden');
+    });
+    
+    // Show admin panel
+    const adminPanel = document.getElementById('admin-panel');
+    if (adminPanel) {
+        adminPanel.classList.remove('hidden');
+    }
+}
+
+function hideAdminElements() {
+    // Hide logout button, show login button
+    const loginBtn = document.getElementById('admin-login-btn');
+    const logoutBtn = document.getElementById('admin-logout-btn');
+    
+    if (loginBtn) loginBtn.classList.remove('hidden');
+    if (logoutBtn) logoutBtn.classList.add('hidden');
+    
+    // Hide all admin-only elements
+    const adminElements = document.querySelectorAll('.admin-only');
+    adminElements.forEach(element => {
+        element.classList.add('hidden');
+    });
+    
+    // Hide admin panel
+    const adminPanel = document.getElementById('admin-panel');
+    if (adminPanel) {
+        adminPanel.classList.add('hidden');
+    }
 }

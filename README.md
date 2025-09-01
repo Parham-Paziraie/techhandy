@@ -23,11 +23,12 @@ A free static website for on-site device repair businesses with customer review 
 
 ## How It Works
 
-1. **Add Repair Posts**: Use the admin panel on the homepage to add repair descriptions
-2. **Share Review Links**: Each post generates a unique review link like `yoursite.com/review.html?post=abc123`
-3. **Customer Reviews**: Customers use the link to leave ratings and comments
-4. **Video Management**: Add YouTube or Vimeo URLs to display timelapse videos
-5. **Contact Updates**: Edit your business information directly on the site
+1. **Admin Login**: Click "Admin Login" and enter password `techhandy123` to access admin features
+2. **Add Repair Posts**: Use the admin panel to add repair descriptions (admin only)
+3. **Share Review Links**: Each post generates a unique review link like `yoursite.com/review.html?post=abc123`
+4. **Customer Reviews**: Customers use the link to leave ratings and comments (no login required)
+5. **Video Management**: Add YouTube or Vimeo URLs to display timelapse videos (admin only)
+6. **Contact Updates**: Edit your business information directly on the site (admin only)
 
 ## Deployment to Render
 
@@ -46,10 +47,13 @@ A free static website for on-site device repair businesses with customer review 
 
 ### Step 3: Post-Deployment Setup
 1. Visit your new site URL
-2. Add your first repair post using the admin panel
-3. Update your contact information using the contact form
-4. Add your timelapse videos using YouTube/Vimeo URLs
-5. Test the review functionality by clicking on a review link
+2. Click "Admin Login" and enter password: `techhandy123`
+3. Add your first repair post using the admin panel
+4. Update your contact information using the contact form
+5. Add your timelapse videos using YouTube/Vimeo URLs
+6. Test the review functionality by clicking on a review link
+
+**IMPORTANT**: Change the admin password by editing line 9 in `script.js` before deploying!
 
 ## Usage Instructions
 
