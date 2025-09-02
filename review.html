@@ -21,7 +21,8 @@
             </div>
 
             <div id="review-form-container">
-                <h2>How was your repair experience?</h2>
+                <h2>Rate your repair experience</h2>
+                <p class="review-info">Please rate your repair experience from 1 to 5 stars. For detailed comments, use the owner comment link provided by the technician.</p>
                 <form id="review-form">
                     <div class="rating-container">
                         <label>Rating:</label>
@@ -36,27 +37,17 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="first-name">First Name (Optional):</label>
-                        <input type="text" id="first-name" name="firstName" placeholder="Your first name">
+                        <label for="reviewer-name">Name (Optional):</label>
+                        <input type="text" id="reviewer-name" name="reviewerName" placeholder="Your name">
                     </div>
 
-                    <div class="form-group">
-                        <label for="last-name">Last Name (Optional):</label>
-                        <input type="text" id="last-name" name="lastName" placeholder="Your last name">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="comment">Comment (Optional):</label>
-                        <textarea id="comment" name="comment" placeholder="Tell us about your experience..." rows="4"></textarea>
-                    </div>
-
-                    <button type="submit">Submit Review</button>
+                    <button type="submit">Submit Rating</button>
                 </form>
             </div>
 
             <div id="success-message" class="hidden">
-                <h2>Thank you for your review!</h2>
-                <p>Your feedback has been submitted successfully.</p>
+                <h2>Thank you for your rating!</h2>
+                <p>Your star rating has been submitted successfully.</p>
                 <a href="index.html" class="btn">Back to Main Site</a>
             </div>
 
@@ -68,9 +59,9 @@
         </section>
 
         <section id="existing-reviews">
-            <h2>Customer Reviews</h2>
+            <h2>Customer Ratings</h2>
             <div id="reviews-container">
-                <!-- Existing reviews will be loaded here -->
+                <!-- Existing star ratings will be loaded here -->
             </div>
         </section>
     </main>

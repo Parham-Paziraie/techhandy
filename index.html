@@ -39,27 +39,36 @@
                 <div class="video-slot">
                     <h3>Video 1</h3>
                     <div class="video-placeholder admin-only hidden">
-                        <p>Upload your first timelapse video</p>
+                        <p>Manage your first timelapse video</p>
                         <input type="url" placeholder="YouTube/Vimeo URL" id="video1-url">
-                        <button onclick="updateVideo(1)">Update Video</button>
+                        <div class="video-controls">
+                            <button onclick="updateVideo(1)">Update Video</button>
+                            <button onclick="removeVideo(1)" class="remove-btn">Remove Video</button>
+                        </div>
                     </div>
                     <div id="video1-container"></div>
                 </div>
                 <div class="video-slot">
                     <h3>Video 2</h3>
                     <div class="video-placeholder admin-only hidden">
-                        <p>Upload your second timelapse video</p>
+                        <p>Manage your second timelapse video</p>
                         <input type="url" placeholder="YouTube/Vimeo URL" id="video2-url">
-                        <button onclick="updateVideo(2)">Update Video</button>
+                        <div class="video-controls">
+                            <button onclick="updateVideo(2)">Update Video</button>
+                            <button onclick="removeVideo(2)" class="remove-btn">Remove Video</button>
+                        </div>
                     </div>
                     <div id="video2-container"></div>
                 </div>
                 <div class="video-slot">
                     <h3>Video 3</h3>
                     <div class="video-placeholder admin-only hidden">
-                        <p>Upload your third timelapse video</p>
+                        <p>Manage your third timelapse video</p>
                         <input type="url" placeholder="YouTube/Vimeo URL" id="video3-url">
-                        <button onclick="updateVideo(3)">Update Video</button>
+                        <div class="video-controls">
+                            <button onclick="updateVideo(3)">Update Video</button>
+                            <button onclick="removeVideo(3)" class="remove-btn">Remove Video</button>
+                        </div>
                     </div>
                     <div id="video3-container"></div>
                 </div>

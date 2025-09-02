@@ -1,6 +1,7 @@
 // Data storage keys
 const POSTS_KEY = 'techhandy_posts';
 const REVIEWS_KEY = 'techhandy_reviews';
+const OWNER_COMMENTS_KEY = 'techhandy_owner_comments';
 const CONTACT_KEY = 'techhandy_contact';
 const VIDEOS_KEY = 'techhandy_videos';
 const ADMIN_KEY = 'techhandy_admin';
@@ -119,7 +120,9 @@ function loadPosts() {
 
     container.innerHTML = posts.map(post => {
         const reviewLink = `${window.location.origin}/review.html?post=${post.id}`;
+        const commentLink = `${window.location.origin}/comment.html?post=${post.id}`;
         const reviews = getStoredData(REVIEWS_KEY).filter(r => r.postId === post.id);
+        const ownerComments = getStoredData(OWNER_COMMENTS_KEY).filter(c => c.postId === post.id);
         const avgRating = reviews.length > 0 
             ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
             : 'No reviews';
@@ -133,10 +136,19 @@ function loadPosts() {
                     <div>
                         <span class="post-date">${new Date(post.date).toLocaleDateString()}</span>
                         ${reviews.length > 0 ? `<span class="post-rating"> | ⭐ ${avgRating} (${reviews.length} reviews)</span>` : ''}
+                        ${ownerComments.length > 0 ? `<span class="owner-comment-status"> | 💬 Owner comment</span>` : ''}
                     </div>
-                    <div>
-                        <a href="${reviewLink}" class="review-link" target="_blank">Customer Review Link</a>
-                        <button class="copy-link-btn" onclick="copyToClipboard('${reviewLink}')">Copy Link</button>
+                    <div class="post-links">
+                        <div class="link-section">
+                            <label>Public Reviews (Stars):</label>
+                            <a href="${reviewLink}" class="review-link" target="_blank">Review Link</a>
+                            <button class="copy-link-btn" onclick="copyToClipboard('${reviewLink}')">Copy</button>
+                        </div>
+                        <div class="link-section">
+                            <label>Owner Comment:</label>
+                            <a href="${commentLink}" class="comment-link" target="_blank">Comment Link</a>
+                            <button class="copy-link-btn" onclick="copyToClipboard('${commentLink}')">Copy</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -221,14 +233,40 @@ function updateVideo(videoNumber) {
                 <iframe src="${embedUrl}" frameborder="0" allowfullscreen></iframe>
             </div>
         `;
-        placeholder.style.display = 'none';
+        
+        // Keep placeholder visible for admin users (don't hide it)
+        // The admin-only class will control visibility based on login status
         
         // Save video data
         const videos = getStoredData(VIDEOS_KEY);
         videos[videoNumber - 1] = { url, embedUrl };
         saveData(VIDEOS_KEY, videos);
+        
+        alert('Video updated successfully!');
     } else {
         alert('Please enter a valid YouTube or Vimeo URL');
+    }
+}
+
+// Remove video
+function removeVideo(videoNumber) {
+    if (!confirm('Are you sure you want to remove this video?')) {
+        return;
+    }
+    
+    const container = document.getElementById(`video${videoNumber}-container`);
+    const urlInput = document.getElementById(`video${videoNumber}-url`);
+    
+    if (container && urlInput) {
+        container.innerHTML = '';
+        urlInput.value = '';
+        
+        // Remove from storage
+        const videos = getStoredData(VIDEOS_KEY);
+        videos[videoNumber - 1] = null;
+        saveData(VIDEOS_KEY, videos);
+        
+        alert('Video removed successfully!');
     }
 }
 
@@ -262,7 +300,7 @@ function loadVideos() {
                         <iframe src="${video.embedUrl}" frameborder="0" allowfullscreen></iframe>
                     </div>
                 `;
-                placeholder.style.display = 'none';
+                // Don't hide placeholder - let admin-only class control visibility
                 urlInput.value = video.url;
             }
         }
@@ -358,9 +396,7 @@ function initializeStarRating() {
 // Submit review
 function submitReview(postId) {
     const rating = parseInt(document.getElementById('rating').value);
-    const firstName = document.getElementById('first-name').value.trim();
-    const lastName = document.getElementById('last-name').value.trim();
-    const comment = document.getElementById('comment').value.trim();
+    const reviewerName = document.getElementById('reviewer-name').value.trim();
 
     if (!rating) {
         alert('Please select a rating');
@@ -371,9 +407,7 @@ function submitReview(postId) {
         id: generateId(),
         postId: postId,
         rating: rating,
-        firstName: firstName,
-        lastName: lastName,
-        comment: comment,
+        reviewerName: reviewerName,
         date: new Date().toISOString()
     };
 
@@ -390,12 +424,12 @@ function loadReviewsForPost(postId) {
     const container = document.getElementById('reviews-container');
 
     if (reviews.length === 0) {
-        container.innerHTML = '<p>No reviews yet. Be the first to leave a review!</p>';
+        container.innerHTML = '<p>No ratings yet. Be the first to rate this repair!</p>';
         return;
     }
 
     container.innerHTML = reviews.map(review => {
-        const authorName = [review.firstName, review.lastName].filter(Boolean).join(' ') || 'Anonymous';
+        const authorName = review.reviewerName || 'Anonymous';
         const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
         
         return `
@@ -407,7 +441,6 @@ function loadReviewsForPost(postId) {
                     </div>
                     <div class="review-date">${new Date(review.date).toLocaleDateString()}</div>
                 </div>
-                ${review.comment ? `<div class="review-comment">${review.comment}</div>` : ''}
             </div>
         `;
     }).join('');
@@ -524,4 +557,132 @@ function hideAdminElements() {
     if (adminPanel) {
         adminPanel.classList.add('hidden');
     }
+}
+
+// Owner Comment Page Functions
+function initializeCommentPage() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('post');
+
+    if (!postId) {
+        showCommentError();
+        return;
+    }
+
+    const posts = getStoredData(POSTS_KEY);
+    const post = posts.find(p => p.id === postId);
+
+    if (!post) {
+        showCommentError();
+        return;
+    }
+
+    // Check if owner comment already exists
+    const ownerComments = getStoredData(OWNER_COMMENTS_KEY);
+    const existingComment = ownerComments.find(c => c.postId === postId);
+
+    if (existingComment) {
+        showExistingComment(existingComment);
+        return;
+    }
+
+    // Load repair details
+    document.getElementById('repair-details').innerHTML = `
+        <div class="post">
+            <h3>Repair Details</h3>
+            <div class="post-content">
+                <p>${post.description}</p>
+            </div>
+            <div class="post-date">Completed on ${new Date(post.date).toLocaleDateString()}</div>
+        </div>
+    `;
+
+    // Load public reviews for this post
+    loadPublicReviewsForComment(postId);
+
+    // Handle comment form submission
+    const commentForm = document.getElementById('owner-comment-form');
+    commentForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        submitOwnerComment(postId);
+    });
+}
+
+function submitOwnerComment(postId) {
+    const ownerName = document.getElementById('owner-name').value.trim();
+    const comment = document.getElementById('owner-comment').value.trim();
+
+    if (!ownerName || !comment) {
+        alert('Please fill in both your name and comment');
+        return;
+    }
+
+    const ownerComment = {
+        id: generateId(),
+        postId: postId,
+        ownerName: ownerName,
+        comment: comment,
+        date: new Date().toISOString()
+    };
+
+    const ownerComments = getStoredData(OWNER_COMMENTS_KEY);
+    ownerComments.push(ownerComment);
+    saveData(OWNER_COMMENTS_KEY, ownerComments);
+
+    showCommentSuccess();
+}
+
+function showExistingComment(comment) {
+    document.getElementById('comment-form-container').classList.add('hidden');
+    document.getElementById('already-commented').classList.remove('hidden');
+    
+    document.getElementById('existing-owner-comment').innerHTML = `
+        <div class="review">
+            <div class="review-header">
+                <div>
+                    <div class="review-author">${comment.ownerName}</div>
+                    <div class="review-date">${new Date(comment.date).toLocaleDateString()}</div>
+                </div>
+            </div>
+            <div class="review-comment">${comment.comment}</div>
+        </div>
+    `;
+}
+
+function loadPublicReviewsForComment(postId) {
+    const reviews = getStoredData(REVIEWS_KEY).filter(r => r.postId === postId);
+    const container = document.getElementById('reviews-container');
+
+    if (reviews.length === 0) {
+        container.innerHTML = '<p>No public ratings yet.</p>';
+        return;
+    }
+
+    container.innerHTML = reviews.map(review => {
+        const authorName = review.reviewerName || 'Anonymous';
+        const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+        
+        return `
+            <div class="review">
+                <div class="review-header">
+                    <div>
+                        <div class="review-author">${authorName}</div>
+                        <div class="review-rating">${stars}</div>
+                    </div>
+                    <div class="review-date">${new Date(review.date).toLocaleDateString()}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function showCommentSuccess() {
+    document.getElementById('comment-form-container').classList.add('hidden');
+    document.getElementById('success-message').classList.remove('hidden');
+}
+
+function showCommentError() {
+    document.getElementById('comment-form-container').classList.add('hidden');
+    document.getElementById('existing-reviews').classList.add('hidden');
+    document.getElementById('error-message').classList.remove('hidden');
 }

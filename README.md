@@ -4,10 +4,12 @@ A free static website for on-site device repair businesses with customer review 
 
 ## Features
 
-- **Repair Posts**: Add and display device repair work with descriptions
-- **Customer Reviews**: Shareable links for customers to leave 1-5 star ratings with optional comments
-- **Video Gallery**: Display up to 3 timelapse repair videos (YouTube/Vimeo)
-- **Contact Information**: Editable business contact details
+- **Admin-Protected Repair Posts**: Add and display device repair work with descriptions (admin login required)
+- **Dual Link System**: Generate separate links for public ratings and owner comments
+- **Public Star Ratings**: Anyone can leave 1-5 star ratings via public review links
+- **Owner-Only Comments**: Device owners get special links to leave one detailed comment
+- **Replaceable Video Gallery**: Display up to 3 timelapse repair videos with easy replacement
+- **Contact Information**: Editable business contact details (admin only)
 - **Mobile Responsive**: Works on all devices
 - **No Backend Required**: Uses localStorage for data persistence
 
@@ -15,7 +17,8 @@ A free static website for on-site device repair businesses with customer review 
 
 ```
 ├── index.html      # Main homepage
-├── review.html     # Customer review page
+├── review.html     # Public star rating page
+├── comment.html    # Owner comment page
 ├── style.css       # All styling
 ├── script.js       # JavaScript functionality
 └── README.md       # This file
@@ -25,10 +28,13 @@ A free static website for on-site device repair businesses with customer review 
 
 1. **Admin Login**: Click "Admin Login" and enter password `techhandy123` to access admin features
 2. **Add Repair Posts**: Use the admin panel to add repair descriptions (admin only)
-3. **Share Review Links**: Each post generates a unique review link like `yoursite.com/review.html?post=abc123`
-4. **Customer Reviews**: Customers use the link to leave ratings and comments (no login required)
-5. **Video Management**: Add YouTube or Vimeo URLs to display timelapse videos (admin only)
-6. **Contact Updates**: Edit your business information directly on the site (admin only)
+3. **Dual Link Generation**: Each post generates TWO shareable links:
+   - **Public Review Link**: `yoursite.com/review.html?post=abc123` (for star ratings)
+   - **Owner Comment Link**: `yoursite.com/comment.html?post=abc123` (for device owner comments)
+4. **Public Ratings**: Anyone can leave 1-5 star ratings using the public review link
+5. **Owner Comments**: Device owners use the special comment link to leave ONE detailed comment
+6. **Video Management**: Add/replace/remove YouTube or Vimeo videos anytime (admin only)
+7. **Contact Updates**: Edit your business information directly on the site (admin only)
 
 ## Deployment to Render
 
@@ -58,39 +64,53 @@ A free static website for on-site device repair businesses with customer review 
 ## Usage Instructions
 
 ### Adding Repair Posts
-1. Scroll to "Recent Repairs" section
-2. Use the "Add New Repair Post" form
-3. Enter a description of the repair work
-4. Click "Add Post"
-5. Share the generated review link with your customer
+1. Login as admin first
+2. Scroll to "Recent Repairs" section
+3. Use the "Add New Repair Post" form
+4. Enter a description of the repair work
+5. Click "Add Post"
+6. Share BOTH generated links:
+   - **Public Review Link**: For anyone to leave star ratings
+   - **Owner Comment Link**: Give this to the device owner for detailed comments
 
-### Managing Videos
-1. Go to "Repair Timelapses" section
-2. Enter a YouTube or Vimeo URL in the video slot
-3. Click "Update Video"
-4. The video will embed automatically
+### Managing Videos (Admin Only)
+1. Login as admin first
+2. Go to "Repair Timelapses" section
+3. Enter a YouTube or Vimeo URL in the video slot
+4. Click "Update Video" to embed or replace existing video
+5. Click "Remove Video" to delete a video
+6. Video controls remain visible for easy management
 
-### Updating Contact Info
-1. Scroll to "Contact Information" section
-2. Use the "Edit Contact Info" form
-3. Fill in your business details
-4. Click "Update Contact Info"
+### Updating Contact Info (Admin Only)
+1. Login as admin first
+2. Scroll to "Contact Information" section
+3. Use the "Edit Contact Info" form
+4. Fill in your business details
+5. Click "Update Contact Info"
 
-## Customer Review Process
+## Customer Feedback Process
 
-1. Customer receives review link from you
-2. Customer visits the link and sees repair details
-3. Customer selects 1-5 stars (required)
-4. Customer optionally adds name and comment
-5. Review is saved and displayed on the review page
+### Public Star Ratings
+1. Anyone receives the public review link from you
+2. Visitor selects 1-5 stars and optionally adds their name
+3. Rating is saved and displayed publicly
+
+### Owner Comments  
+1. Device owner receives the special comment link from you
+2. Owner visits link and sees repair details
+3. Owner enters their name and detailed comment (both required)
+4. Only ONE comment allowed per owner link
+5. Comment is saved and displayed on the post
 
 ## Data Storage
 
 All data is stored in the browser's localStorage:
 - **Repair posts** with descriptions and dates
-- **Customer reviews** with ratings and comments
+- **Public star ratings** with names and ratings
+- **Owner comments** with names and detailed feedback (one per post)
 - **Contact information** for your business
 - **Video URLs** for the timelapse gallery
+- **Admin login status** (persistent until logout)
 
 **Note**: Data is stored locally in each visitor's browser. For a shared admin experience across devices, consider upgrading to a backend solution in the future.
 
