@@ -126,19 +126,6 @@ button:hover {
     font-size: 0.9rem;
 }
 
-.review-link {
-    background: #28a745;
-    color: white;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    transition: background-color 0.3s;
-}
-
-.review-link:hover {
-    background: #218838;
-}
 
 .copy-link-btn {
     background: #ffc107;
@@ -219,14 +206,6 @@ button:hover {
     border-left: 4px solid #17a2b8;
 }
 
-.review-info {
-    background: #fff3cd;
-    padding: 1rem;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-    color: #856404;
-    border-left: 4px solid #ffc107;
-}
 
 /* Video Gallery */
 .video-gallery {
@@ -309,28 +288,6 @@ button:hover {
     border-radius: 8px;
 }
 
-/* Review Page Styles */
-.rating-container {
-    text-align: center;
-    margin: 1.5rem 0;
-}
-
-.stars {
-    font-size: 2rem;
-    margin: 0.5rem 0;
-}
-
-.star {
-    color: #ddd;
-    cursor: pointer;
-    transition: color 0.2s;
-    margin: 0 2px;
-}
-
-.star:hover,
-.star.active {
-    color: #ffc107;
-}
 
 .form-group {
     display: flex;
@@ -497,10 +454,6 @@ button:hover {
     margin-bottom: 1rem;
 }
 
-.review-rating {
-    font-size: 1.2rem;
-    color: #ffc107;
-}
 
 .review-author {
     font-weight: 600;
@@ -577,9 +530,6 @@ footer {
         align-items: flex-start;
     }
     
-    .stars {
-        font-size: 1.8rem;
-    }
 }
 
 @media (max-width: 480px) {
@@ -596,7 +546,4 @@ footer {
         padding: 1rem;
     }
     
-    .stars {
-        font-size: 1.5rem;
-    }
 }

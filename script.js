@@ -1,6 +1,5 @@
 // Data storage keys
 const POSTS_KEY = 'techhandy_posts';
-const REVIEWS_KEY = 'techhandy_reviews';
 const OWNER_COMMENTS_KEY = 'techhandy_owner_comments';
 const CONTACT_KEY = 'techhandy_contact';
 const VIDEOS_KEY = 'techhandy_videos';
@@ -27,10 +26,6 @@ function saveData(key, data) {
 
 // Initialize the main page
 document.addEventListener('DOMContentLoaded', function() {
-    if (window.location.pathname.includes('review.html')) {
-        return; // Don't initialize main page functions on review page
-    }
-    
     loadPosts();
     loadContactInfo();
     loadVideos();
@@ -119,13 +114,8 @@ function loadPosts() {
     }
 
     container.innerHTML = posts.map(post => {
-        const reviewLink = `${window.location.origin}/review.html?post=${post.id}`;
         const commentLink = `${window.location.origin}/comment.html?post=${post.id}`;
-        const reviews = getStoredData(REVIEWS_KEY).filter(r => r.postId === post.id);
         const ownerComments = getStoredData(OWNER_COMMENTS_KEY).filter(c => c.postId === post.id);
-        const avgRating = reviews.length > 0 
-            ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
-            : 'No reviews';
         
         return `
             <div class="post">
@@ -135,15 +125,9 @@ function loadPosts() {
                 <div class="post-meta">
                     <div>
                         <span class="post-date">${new Date(post.date).toLocaleDateString()}</span>
-                        ${reviews.length > 0 ? `<span class="post-rating"> | ⭐ ${avgRating} (${reviews.length} reviews)</span>` : ''}
                         ${ownerComments.length > 0 ? `<span class="owner-comment-status"> | 💬 Owner comment</span>` : ''}
                     </div>
                     <div class="post-links">
-                        <div class="link-section">
-                            <label>Public Reviews (Stars):</label>
-                            <a href="${reviewLink}" class="review-link" target="_blank">Review Link</a>
-                            <button class="copy-link-btn" onclick="copyToClipboard('${reviewLink}')">Copy</button>
-                        </div>
                         <div class="link-section">
                             <label>Owner Comment:</label>
                             <a href="${commentLink}" class="comment-link" target="_blank">Comment Link</a>
@@ -159,7 +143,7 @@ function loadPosts() {
 // Copy link to clipboard
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
-        alert('Review link copied to clipboard!');
+        alert('Comment link copied to clipboard!');
     }).catch(() => {
         prompt('Copy this link:', text);
     });
@@ -307,157 +291,6 @@ function loadVideos() {
     });
 }
 
-// Review page functionality
-function initializeReviewPage() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const postId = urlParams.get('post');
-
-    if (!postId) {
-        showErrorMessage();
-        return;
-    }
-
-    const posts = getStoredData(POSTS_KEY);
-    const post = posts.find(p => p.id === postId);
-
-    if (!post) {
-        showErrorMessage();
-        return;
-    }
-
-    // Load repair details
-    document.getElementById('repair-details').innerHTML = `
-        <div class="post">
-            <h3>Repair Details</h3>
-            <div class="post-content">
-                <p>${post.description}</p>
-            </div>
-            <div class="post-date">Completed on ${new Date(post.date).toLocaleDateString()}</div>
-        </div>
-    `;
-
-    // Load existing reviews for this post
-    loadReviewsForPost(postId);
-
-    // Initialize star rating
-    initializeStarRating();
-
-    // Handle review form submission
-    const reviewForm = document.getElementById('review-form');
-    reviewForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        submitReview(postId);
-    });
-}
-
-// Initialize star rating functionality
-function initializeStarRating() {
-    const stars = document.querySelectorAll('.star');
-    const ratingInput = document.getElementById('rating');
-
-    stars.forEach(star => {
-        star.addEventListener('click', function() {
-            const rating = parseInt(this.dataset.rating);
-            ratingInput.value = rating;
-            
-            stars.forEach((s, index) => {
-                if (index < rating) {
-                    s.classList.add('active');
-                } else {
-                    s.classList.remove('active');
-                }
-            });
-        });
-
-        star.addEventListener('mouseover', function() {
-            const rating = parseInt(this.dataset.rating);
-            stars.forEach((s, index) => {
-                if (index < rating) {
-                    s.style.color = '#ffc107';
-                } else {
-                    s.style.color = '#ddd';
-                }
-            });
-        });
-    });
-
-    document.querySelector('.stars').addEventListener('mouseleave', function() {
-        const currentRating = parseInt(ratingInput.value) || 0;
-        stars.forEach((s, index) => {
-            if (index < currentRating) {
-                s.style.color = '#ffc107';
-            } else {
-                s.style.color = '#ddd';
-            }
-        });
-    });
-}
-
-// Submit review
-function submitReview(postId) {
-    const rating = parseInt(document.getElementById('rating').value);
-    const reviewerName = document.getElementById('reviewer-name').value.trim();
-
-    if (!rating) {
-        alert('Please select a rating');
-        return;
-    }
-
-    const review = {
-        id: generateId(),
-        postId: postId,
-        rating: rating,
-        reviewerName: reviewerName,
-        date: new Date().toISOString()
-    };
-
-    const reviews = getStoredData(REVIEWS_KEY);
-    reviews.push(review);
-    saveData(REVIEWS_KEY, reviews);
-
-    showSuccessMessage();
-}
-
-// Load reviews for specific post
-function loadReviewsForPost(postId) {
-    const reviews = getStoredData(REVIEWS_KEY).filter(r => r.postId === postId);
-    const container = document.getElementById('reviews-container');
-
-    if (reviews.length === 0) {
-        container.innerHTML = '<p>No ratings yet. Be the first to rate this repair!</p>';
-        return;
-    }
-
-    container.innerHTML = reviews.map(review => {
-        const authorName = review.reviewerName || 'Anonymous';
-        const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
-        
-        return `
-            <div class="review">
-                <div class="review-header">
-                    <div>
-                        <div class="review-author">${authorName}</div>
-                        <div class="review-rating">${stars}</div>
-                    </div>
-                    <div class="review-date">${new Date(review.date).toLocaleDateString()}</div>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-// Show success message
-function showSuccessMessage() {
-    document.getElementById('review-form-container').classList.add('hidden');
-    document.getElementById('success-message').classList.remove('hidden');
-}
-
-// Show error message
-function showErrorMessage() {
-    document.getElementById('review-form-container').classList.add('hidden');
-    document.getElementById('existing-reviews').classList.add('hidden');
-    document.getElementById('error-message').classList.remove('hidden');
-}
 
 // Admin Authentication Functions
 function checkAdminStatus() {
@@ -597,8 +430,6 @@ function initializeCommentPage() {
         </div>
     `;
 
-    // Load public reviews for this post
-    loadPublicReviewsForComment(postId);
 
     // Handle comment form submission
     const commentForm = document.getElementById('owner-comment-form');
@@ -649,32 +480,6 @@ function showExistingComment(comment) {
     `;
 }
 
-function loadPublicReviewsForComment(postId) {
-    const reviews = getStoredData(REVIEWS_KEY).filter(r => r.postId === postId);
-    const container = document.getElementById('reviews-container');
-
-    if (reviews.length === 0) {
-        container.innerHTML = '<p>No public ratings yet.</p>';
-        return;
-    }
-
-    container.innerHTML = reviews.map(review => {
-        const authorName = review.reviewerName || 'Anonymous';
-        const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
-        
-        return `
-            <div class="review">
-                <div class="review-header">
-                    <div>
-                        <div class="review-author">${authorName}</div>
-                        <div class="review-rating">${stars}</div>
-                    </div>
-                    <div class="review-date">${new Date(review.date).toLocaleDateString()}</div>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
 
 function showCommentSuccess() {
     document.getElementById('comment-form-container').classList.add('hidden');
@@ -683,6 +488,5 @@ function showCommentSuccess() {
 
 function showCommentError() {
     document.getElementById('comment-form-container').classList.add('hidden');
-    document.getElementById('existing-reviews').classList.add('hidden');
     document.getElementById('error-message').classList.remove('hidden');
 }
